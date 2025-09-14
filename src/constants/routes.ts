@@ -17,6 +17,7 @@ export const ROUTES = {
     DASHBOARD: '/dashboard',
     DASHBOARD_CONSOLE: '/dashboard/console',
     DASHBOARD_ANALYSIS: '/dashboard/analysis',
+    DASHBOARD_DEMO: '/dashboard/demo', // 新增动态路由演示页面
     DASHBOARD_ECOMMERCE: '/dashboard/ecommerce',
 
     // 组件演示
@@ -97,6 +98,15 @@ export const MENU_CONFIG: MenuConfig[] = [
                 path: ROUTES.DASHBOARD_CONSOLE,
                 meta: {
                     title: '工作台',
+                    keepAlive: true,
+                },
+            },
+            {
+                id: 'dashboard-demo',
+                name: 'Demo',
+                path: ROUTES.DASHBOARD_DEMO,
+                meta: {
+                    title: '动态路由演示',
                     keepAlive: true,
                 },
             },

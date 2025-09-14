@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Layout, Menu } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Layout, Menu, Spin } from 'antd';
 import type { MenuProps } from 'antd';
 import {
     DashboardOutlined,
@@ -8,11 +8,19 @@ import {
     BarChartOutlined,
     SettingOutlined,
     UserOutlined,
+    HomeOutlined,
+    BuildOutlined,
+    FormOutlined,
+    TableOutlined,
+    UnorderedListOutlined,
+    EditOutlined,
+    FileTextOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/stores/useAuthStore';
-import { MENU_CONFIG, MenuConfig } from '@/constants/routes';
+import { getMockRoutes } from '@/mock/routeData';
+import { DynamicRoute } from '@/types/route';
 
 const { Sider } = Layout;
 
@@ -29,6 +37,13 @@ const ICON_MAP = {
     BarChartOutlined,
     SettingOutlined,
     UserOutlined,
+    HomeOutlined,
+    BuildOutlined,
+    FormOutlined,
+    TableOutlined,
+    UnorderedListOutlined,
+    EditOutlined,
+    FileTextOutlined,
 } as const;
 
 // 获取图标组件
@@ -41,24 +56,36 @@ const getIcon = (iconName?: string) => {
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { userInfo } = useAuth();
     const [openKeys, setOpenKeys] = useState<string[]>([]);
+    const [routes, setRoutes] = useState<DynamicRoute[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    // 获取动态路由数据
+    useEffect(() => {
+        const fetchRoutes = async () => {
+            try {
+                const routeData = await getMockRoutes();
+                setRoutes(routeData);
+                console.log('📋 Sidebar: 获取路由数据成功', routeData);
+            } catch (error) {
+                console.error('❌ Sidebar: 获取路由数据失败', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchRoutes();
+    }, []);
 
     const handleMenuClick = ({ key }: { key: string }) => {
         navigate(key);
     };
 
     // 递归构建菜单项
-    const buildMenuItems = (menuItems: MenuConfig[]): MenuProps['items'] => {
+    const buildMenuItems = (menuItems: DynamicRoute[]): MenuProps['items'] => {
         return menuItems
+            .filter((menuItem) => menuItem.enabled && !menuItem.meta.hideInMenu)
             .map((menuItem) => {
-                const { meta, children, path, id, icon } = menuItem;
-
-                // 检查权限（简单的角色检查）
-                if (meta?.roles && userInfo?.roles) {
-                    const hasPermission = meta.roles.some((role) => userInfo.roles.includes(role));
-                    if (!hasPermission) return null;
-                }
+                const { meta, children, path, id } = menuItem;
 
                 if (children && children.length > 0) {
                     const childItems = buildMenuItems(children)?.filter(Boolean) || [];
@@ -66,7 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
 
                     return {
                         key: id,
-                        icon: getIcon(meta?.icon || icon),
+                        icon: getIcon(meta?.icon),
                         label: meta?.title,
                         children: childItems,
                     };
@@ -74,19 +101,18 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
 
                 return {
                     key: path,
-                    icon: getIcon(meta?.icon || icon),
+                    icon: getIcon(meta?.icon),
                     label: meta?.title,
                 };
             })
             .filter(Boolean);
     };
 
-    const menuItems = buildMenuItems(MENU_CONFIG);
+    const menuItems = buildMenuItems(routes);
 
     // 获取当前选中的菜单项
     const getSelectedKeys = () => {
         const { pathname } = location;
-        // 精确匹配或者匹配父路径
         return [pathname];
     };
 
@@ -96,10 +122,10 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
         const openKeysArray: string[] = [];
 
         // 查找匹配的父菜单
-        const findParentKeys = (items: MenuConfig[], currentPath: string) => {
+        const findParentKeys = (items: DynamicRoute[], currentPath: string) => {
             for (const item of items) {
                 if (item.children) {
-                    const hasMatchingChild = item.children.some((child) =>
+                    const hasMatchingChild = item.children.some((child: DynamicRoute) =>
                         currentPath.startsWith(child.path),
                     );
                     if (hasMatchingChild) {
@@ -110,7 +136,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
             }
         };
 
-        findParentKeys(MENU_CONFIG, pathname);
+        findParentKeys(routes, pathname);
         return openKeysArray;
     };
 
@@ -155,16 +181,22 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
             </div>
 
             {/* 菜单区域 */}
-            <Menu
-                mode="inline"
-                selectedKeys={getSelectedKeys()}
-                openKeys={openKeys}
-                onOpenChange={handleOpenChange}
-                onClick={handleMenuClick}
-                className="border-none bg-transparent"
-                theme="light"
-                items={menuItems}
-            />
+            {loading ? (
+                <div className="flex justify-center items-center h-32">
+                    <Spin size="small" />
+                </div>
+            ) : (
+                <Menu
+                    mode="inline"
+                    selectedKeys={getSelectedKeys()}
+                    openKeys={openKeys}
+                    onOpenChange={handleOpenChange}
+                    onClick={handleMenuClick}
+                    className="border-none bg-transparent"
+                    theme="light"
+                    items={menuItems}
+                />
+            )}
         </Sider>
     );
 };

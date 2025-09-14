@@ -256,7 +256,7 @@ const Login: React.FC = () => {
             }, 150);
 
             // 跳转到仪表板
-            navigate('/dashboard');
+            navigate('/');
         } catch (error) {
             console.error('登录失败:', error);
             message.error('登录失败，请检查用户名和密码');

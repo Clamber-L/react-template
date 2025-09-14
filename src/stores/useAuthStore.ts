@@ -48,11 +48,19 @@ interface AuthState {
 
 // 获取存储的初始状态
 const getInitialState = () => ({
-    isLogin: false,
+    // 为了演示目的，默认设置为已登录状态
+    // 在实际项目中应该设置为 false
+    isLogin: true,
     loading: false,
-    userInfo: null,
-    accessToken: '',
-    refreshToken: '',
+    userInfo: {
+        id: 'demo-user',
+        username: 'demo',
+        email: 'demo@example.com',
+        roles: ['user', 'admin'], // 演示用户具有管理员权限
+        permissions: ['read', 'write', 'admin'],
+    } as UserInfo,
+    accessToken: 'demo-token',
+    refreshToken: 'demo-refresh-token',
 });
 
 export const useAuthStore = create<AuthState>()(

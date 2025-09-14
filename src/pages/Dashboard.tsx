@@ -11,8 +11,6 @@ import {
     LineChartOutlined,
 } from '@ant-design/icons';
 
-import { useNavigate } from 'react-router-dom';
-
 import { useAuth } from '@/stores/useAuthStore';
 
 // 计数动画组件
@@ -62,7 +60,7 @@ const Banner: React.FC = () => {
     return (
         <Card
             className="h-52 bg-gradient-to-br from-indigo-500 to-purple-600 border-none"
-            bodyStyle={{ height: '100%', padding: '24px' }}
+            style={{ height: '100%', padding: '24px' }}
         >
             <div className="flex justify-between items-center h-full text-white">
                 <div className="flex-1">
@@ -98,7 +96,7 @@ const Banner: React.FC = () => {
 // 总订单量组件
 const TotalOrderVolume: React.FC = () => {
     return (
-        <Card className="h-52" bodyStyle={{ height: '100%', padding: '20px' }}>
+        <Card className="h-52" style={{ height: '100%', padding: '20px' }}>
             <div className="text-center mb-5">
                 <p className="text-2xl font-semibold text-gray-800 dark:text-gray-200 m-0">
                     205,216
@@ -134,7 +132,7 @@ const TotalOrderVolume: React.FC = () => {
 // 商品总数组件
 const TotalProducts: React.FC = () => {
     return (
-        <Card className="h-52" bodyStyle={{ height: '100%', padding: '20px' }}>
+        <Card className="h-52" style={{ height: '100%', padding: '20px' }}>
             <div className="text-center mb-5">
                 <p className="text-2xl font-semibold text-gray-800 dark:text-gray-200 m-0">
                     55,231
@@ -142,9 +140,9 @@ const TotalProducts: React.FC = () => {
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 m-0">商品总数</p>
             </div>
             <div className="flex justify-around items-end h-32 px-5">
-                {[50, 80, 40, 90, 60, 70].map((height, index) => (
+                {[50, 80, 40, 90, 60, 70].map((height) => (
                     <div
-                        key={index}
+                        key={`bar-${height}-${Math.random()}`}
                         className="w-4 bg-gradient-to-t from-blue-500 to-blue-400 dark:from-blue-600 dark:to-blue-500 rounded-t hover:from-blue-600 hover:to-blue-500 dark:hover:from-blue-700 dark:hover:to-blue-600 transition-colors"
                         style={{ height: `${height}%` }}
                     />
@@ -211,19 +209,19 @@ const HotCommodity: React.FC = () => {
     return (
         <Card title="热门商品" extra={<TrophyOutlined />}>
             <div className="space-y-3">
-                {products.map((product, index) => (
+                {products.map((product, productIndex) => (
                     <div
-                        key={index}
+                        key={product.name}
                         className="flex items-center py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                     >
                         <div
                             className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold mr-3 ${
-                                index === 0
+                                productIndex === 0
                                     ? 'bg-yellow-400 text-white'
                                     : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
                             }`}
                         >
-                            {index + 1}
+                            {productIndex + 1}
                         </div>
                         <div className="flex-1">
                             <div className="text-sm text-gray-800 dark:text-gray-200 mb-1">
@@ -254,12 +252,19 @@ const RecentTransaction: React.FC = () => {
         { id: '#12348', amount: 623, status: '已完成', time: '2小时前' },
     ];
 
+    // 获取状态颜色
+    const getStatusColor = (status: string) => {
+        if (status === '已完成') return 'green';
+        if (status === '处理中') return 'blue';
+        return 'red';
+    };
+
     return (
         <Card title="近期交易">
             <div className="space-y-3">
-                {transactions.map((transaction, index) => (
+                {transactions.map((transaction) => (
                     <div
-                        key={index}
+                        key={transaction.id}
                         className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                     >
                         <div>
@@ -274,15 +279,7 @@ const RecentTransaction: React.FC = () => {
                             <div className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">
                                 ¥{transaction.amount}
                             </div>
-                            <Tag
-                                color={
-                                    transaction.status === '已完成'
-                                        ? 'green'
-                                        : transaction.status === '处理中'
-                                          ? 'blue'
-                                          : 'red'
-                                }
-                            >
+                            <Tag color={getStatusColor(transaction.status)}>
                                 {transaction.status}
                             </Tag>
                         </div>
@@ -294,8 +291,7 @@ const RecentTransaction: React.FC = () => {
 };
 
 const Dashboard: React.FC = () => {
-    const { userInfo, logout } = useAuth();
-    const navigate = useNavigate();
+    const { userInfo } = useAuth();
 
     return (
         <div className="space-y-6">
