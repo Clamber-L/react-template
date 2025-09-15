@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Typography, Button, Space } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from '@/config';
 
 const { Title, Paragraph } = Typography;
 

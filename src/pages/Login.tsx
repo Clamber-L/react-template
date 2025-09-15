@@ -74,7 +74,7 @@ const LoginLeftView: React.FC = () => {
             </div>
 
             {/* 几何装饰元素 */}
-            <div className="absolute top-[20%] left-[10%] w-15 h-15 border-2 border-blue-500 dark:border-blue-400 rounded-full opacity-30" />
+            <div className="absolute top-[20%] left-[10%] w-15 h-15 border-2 border-gray-500 dark:border-gray-400 rounded-full opacity-30" />
             <div className="absolute top-[15%] right-[20%] w-10 h-10 bg-green-500 dark:bg-green-400 transform rotate-45 opacity-30" />
             <div className="absolute bottom-[30%] left-[15%] w-8 h-8 bg-orange-400 dark:bg-orange-500 rounded-full opacity-30" />
             <div className="absolute bottom-[20%] right-[15%] w-12 h-12 bg-purple-600 dark:bg-purple-500 rounded-lg opacity-30" />
@@ -160,7 +160,7 @@ const DragVerify: React.FC<{
                     {successText}
                 </div>
                 <div
-                    className="absolute left-0 top-0 w-10 h-10 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md flex items-center justify-center cursor-grab shadow-sm hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition-all active:cursor-grabbing"
+                    className="absolute left-0 top-0 w-10 h-10 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md flex items-center justify-center cursor-grab shadow-sm hover:border-gray-600 dark:hover:border-gray-400 hover:shadow-md transition-all active:cursor-grabbing"
                     style={{
                         transform: `translateX(${value ? (dragRef.current?.clientWidth || 0) - 40 : dragPosition}px)`,
                     }}
@@ -268,7 +268,7 @@ const Login: React.FC = () => {
         key: lang.value,
         label: (
             <div
-                className={`flex items-center justify-between px-3 py-2 ${currentLanguage === lang.value ? 'bg-blue-50 text-blue-600 dark:bg-blue-900 dark:text-blue-400' : ''}`}
+                className={`flex items-center justify-between px-3 py-2 ${currentLanguage === lang.value ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100' : ''}`}
             >
                 <span className="mr-2">{lang.label}</span>
                 {currentLanguage === lang.value && <span>✓</span>}
@@ -285,13 +285,13 @@ const Login: React.FC = () => {
                 {/* 顶部右侧工具栏 */}
                 <div className="fixed top-6 right-8 z-50 flex items-center justify-end">
                     <div
-                        className="inline-block p-2 ml-4 cursor-pointer select-none transition-all rounded-md text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900"
+                        className="inline-block p-2 ml-4 cursor-pointer select-none transition-all rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
                         onClick={toggleTheme}
                     >
                         <BulbOutlined className="text-lg" />
                     </div>
                     <Dropdown menu={{ items: languageMenuItems }} placement="bottomRight">
-                        <div className="inline-block p-2 ml-4 cursor-pointer select-none transition-all rounded-md text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900">
+                        <div className="inline-block p-2 ml-4 cursor-pointer select-none transition-all rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
                             <GlobalOutlined className="text-lg" />
                         </div>
                     </Dropdown>
@@ -394,7 +394,7 @@ const Login: React.FC = () => {
                                 </Form.Item>
                                 <a
                                     href="#"
-                                    className="text-blue-500 dark:text-blue-400 no-underline hover:underline"
+                                    className="text-gray-700 dark:text-gray-300 no-underline hover:underline"
                                 >
                                     忘记密码？
                                 </a>
@@ -416,7 +416,7 @@ const Login: React.FC = () => {
                                     没有账号？
                                     <a
                                         href="#"
-                                        className="text-blue-500 dark:text-blue-400 no-underline hover:underline"
+                                        className="text-gray-700 dark:text-gray-300 no-underline hover:underline"
                                     >
                                         立即注册
                                     </a>

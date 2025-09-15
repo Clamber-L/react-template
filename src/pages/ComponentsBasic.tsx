@@ -62,10 +62,10 @@ const ComponentsBasic: React.FC = () => {
 
             <Row gutter={[16, 16]}>
                 {componentCategories.map((category, index) => (
-                    <Col xs={24} sm={12} md={8} lg={6} xl={4} key={index}>
+                    <Col xs={24} sm={12} md={8} lg={6} xl={4} key={category.title}>
                         <Card
                             hoverable
-                            className="h-full"
+                            className="h-full border border-gray-200 dark:border-gray-700"
                             cover={
                                 <div className="flex items-center justify-center h-24 bg-gray-50 dark:bg-gray-800">
                                     <div className={`text-3xl text-${category.color}-500`}>
@@ -81,7 +81,7 @@ const ComponentsBasic: React.FC = () => {
                                         <div className="flex flex-wrap gap-1">
                                             {category.components.map((comp, idx) => (
                                                 <Tag
-                                                    key={idx}
+                                                    key={comp}
                                                     color={category.color}
                                                     className="text-xs"
                                                 >
@@ -100,7 +100,7 @@ const ComponentsBasic: React.FC = () => {
                 ))}
             </Row>
 
-            <Card title="组件演示">
+            <Card title="组件演示" className="border border-gray-200 dark:border-gray-700">
                 <div className="space-y-6">
                     <div>
                         <h3 className="text-lg font-medium mb-4">按钮组件</h3>

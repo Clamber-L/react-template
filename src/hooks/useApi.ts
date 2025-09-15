@@ -1,9 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { create } from 'zustand';
-
-import api from './request';
-import { BaseRequestConfig, PageParams, PageResponse } from './types';
-import { HttpError, isHttpError } from './error';
+import { api, BaseRequestConfig, HttpError, isHttpError, PageParams, PageResponse } from '@/lib';
 
 // API状态接口
 interface ApiState<T = any> {
@@ -148,7 +145,7 @@ export function useApi<T = any>(
                 return response;
             } catch (error) {
                 if (error instanceof Error && error.name === 'AbortError') {
-                    return;
+                    return null;
                 }
 
                 const httpError = isHttpError(error) ? error : new HttpError('请求失败', 500);
@@ -225,7 +222,7 @@ export function useApi<T = any>(
                 return response;
             } catch (error) {
                 if (error instanceof Error && error.name === 'AbortError') {
-                    return;
+                    return null;
                 }
 
                 const httpError = isHttpError(error) ? error : new HttpError('请求失败', 500);

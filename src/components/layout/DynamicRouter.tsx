@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Spin, Button } from 'antd';
 
 import { useAuth } from '@/stores/useAuthStore';
-import { getComponent } from '@/utils/componentMap';
-import { getMockRoutes, isPathAllowed } from '@/mock/routeData';
+import { getComponent } from '@/lib';
+import { getMockRoutes, isPathAllowed } from '@/config';
 import { DynamicRoute } from '@/types/route';
 
 /**

@@ -1,9 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-import { PublicRoute } from './components/AuthGuard';
-import { DynamicRouter } from './components/DynamicRouter';
+import { PublicRoute, DynamicRouter } from './components';
 import { useAuth } from './stores/useAuthStore';
-import { ROUTES } from './constants/routes';
+import { ROUTES } from './config';
 
 // 页面组件
 import Login from './pages/Login';

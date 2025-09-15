@@ -18,8 +18,7 @@ import {
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import { useAuth } from '@/stores/useAuthStore';
-import { getMockRoutes } from '@/mock/routeData';
+import { getMockRoutes } from '@/config';
 import { DynamicRoute } from '@/types/route';
 
 const { Sider } = Layout;
@@ -142,9 +141,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
 
     // 初始化展开的菜单项
     React.useEffect(() => {
-        const defaultKeys = getDefaultOpenKeys();
-        setOpenKeys(defaultKeys);
-    }, [location.pathname]);
+        if (routes.length > 0) {
+            const defaultKeys = getDefaultOpenKeys();
+            setOpenKeys(defaultKeys);
+        }
+    }, [location.pathname, routes]);
 
     // 处理菜单展开/收起 - 手风琴模式
     const handleOpenChange = (keys: string[]) => {
@@ -164,11 +165,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
             collapsible
             collapsed={collapsed}
             width={256}
-            className="bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700"
+            className="bg-white dark:bg-black border-r border-gray-300 dark:border-gray-800 shadow-sm"
             theme="light"
         >
             {/* Logo区域 */}
-            <div className="h-16 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
+            <div className="h-16 flex items-center justify-center border-b border-gray-300 dark:border-gray-800">
                 {!collapsed && (
                     <div className="flex items-center">
                         <div className="text-2xl mr-2">🎨</div>

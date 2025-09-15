@@ -360,3 +360,57 @@ export const filterRoutesByRoles = (
             children: route.children ? filterRoutesByRoles(route.children, userRoles) : undefined,
         }));
 };
+
+/**
+ * Mock API - 模拟获取路由数据的API调用
+ */
+export const getMockRoutes = (): Promise<DynamicRoute[]> => {
+    return new Promise((resolve) => {
+        // 模拟网络延迟
+        setTimeout(() => {
+            console.log('📋 Mock API: 获取路由数据', mockRoutes);
+            resolve(mockRoutes);
+        }, 300);
+    });
+};
+
+/**
+ * 检查路径是否在允许的路由树中
+ */
+export const isPathAllowed = (path: string, routes: DynamicRoute[] = mockRoutes): boolean => {
+    for (const route of routes) {
+        // 检查当前路由
+        if (route.path === path && route.enabled) {
+            return true;
+        }
+
+        // 递归检查子路由
+        if (route.children) {
+            if (isPathAllowed(path, route.children)) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
+/**
+ * 获取所有允许的路径列表
+ */
+export const getAllowedPaths = (routes: DynamicRoute[] = mockRoutes): string[] => {
+    const paths: string[] = [];
+
+    const collectPaths = (routeList: DynamicRoute[]) => {
+        routeList.forEach((route) => {
+            if (route.enabled) {
+                paths.push(route.path);
+            }
+            if (route.children) {
+                collectPaths(route.children);
+            }
+        });
+    };
+
+    collectPaths(routes);
+    return paths;
+};

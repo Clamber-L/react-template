@@ -30,7 +30,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onCollapse }) => {
     };
 
     return (
-        <Header className="flex justify-between items-center px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <Header className="flex justify-between items-center px-4 bg-white dark:bg-black border-b border-gray-300 dark:border-gray-800 shadow-sm">
             <div className="flex items-center">
                 <Button
                     type="text"

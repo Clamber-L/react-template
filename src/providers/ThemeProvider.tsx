@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 import { ConfigProvider, App as AntdApp } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 
-import { lightTheme, darkTheme } from '@/config/antdTheme';
+import { lightTheme, darkTheme } from '@/config';
 
 // 主题上下文
 interface ThemeContextType {

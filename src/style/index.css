@@ -19,30 +19,30 @@ body {
 
 /* 确保根元素的背景色切换 */
 html {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-gray-100 text-gray-900;
 }
 
 html.dark {
-    @apply bg-gray-900 text-gray-100;
+    @apply bg-black text-gray-100;
 }
 
 /* 确保body的背景色切换 */
 body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-gray-100 text-gray-900;
 }
 
 body.dark {
-    @apply bg-gray-900 text-gray-100;
+    @apply bg-black text-gray-100;
 }
 
 /* 主应用容器样式 */
 #root {
     min-height: 100vh;
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-gray-100 text-gray-900;
 }
 
 .dark #root {
-    @apply bg-gray-900 text-gray-100;
+    @apply bg-black text-gray-100;
 }
 
 /* 自定义滚动条样式 */
@@ -56,7 +56,7 @@ body.dark {
 }
 
 .dark ::-webkit-scrollbar-track {
-    @apply bg-gray-800;
+    @apply bg-gray-900;
 }
 
 ::-webkit-scrollbar-thumb {

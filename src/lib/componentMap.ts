@@ -8,9 +8,9 @@ import Login from '@/pages/Login';
 import MainLayout from '@/pages/MainLayout';
 
 // 演示组件
-import SimpleAntdDemo from '@/components/SimpleAntdDemo';
-import AntdDemo from '@/components/AntdDemo';
-import WorkInProgressPage from '@/components/WorkInProgressPage';
+import SimpleAntdDemo from '@/components/demo/SimpleAntdDemo';
+import AntdDemo from '@/components/demo/AntdDemo';
+import WorkInProgressPage from '@/components/ui/WorkInProgressPage';
 
 /**
  * 页面组件映射表

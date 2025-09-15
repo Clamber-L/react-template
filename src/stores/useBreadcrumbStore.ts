@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { MENU_CONFIG, MenuConfig } from '@/constants/routes';
+import { MENU_CONFIG, MenuConfig } from '@/config';
 
 export interface BreadcrumbItem {
     key: string;
@@ -157,8 +157,14 @@ export const useBreadcrumbStore = create<BreadcrumbState>()(
                 });
 
                 // 如果删除的是当前页面，需要导航到新的激活页面
+                // 不直接使用 window.location.href，而是触发自定义事件
+                // 让 Breadcrumb 组件监听并使用 react-router 进行导航
                 if (activeKey === key && typeof window !== 'undefined') {
-                    window.location.href = newActiveKey;
+                    window.dispatchEvent(
+                        new CustomEvent('breadcrumb-navigate', {
+                            detail: { path: newActiveKey },
+                        }),
+                    );
                 }
             },
 
@@ -181,6 +187,15 @@ export const useBreadcrumbStore = create<BreadcrumbState>()(
                     breadcrumbHistory: [homeItem],
                     activeKey: '/dashboard/console',
                 });
+
+                // 触发导航事件跳转到首页
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(
+                        new CustomEvent('breadcrumb-navigate', {
+                            detail: { path: '/dashboard/console' },
+                        }),
+                    );
+                }
             },
 
             // 移除其他面包屑（保留当前和首页）

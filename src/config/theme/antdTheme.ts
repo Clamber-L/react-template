@@ -115,6 +115,8 @@ export const lightTheme: ThemeConfig = {
             paddingLG: 24,
             boxShadowTertiary:
                 '0px 1px 2px 0px rgba(0, 0, 0, 0.03), 0px 1px 6px -1px rgba(0, 0, 0, 0.02)',
+            // 为浅色模式添加明显边框
+            colorBorderSecondary: '#e5e7eb',
         },
         Table: {
             borderRadius: 6,
@@ -159,28 +161,33 @@ export const darkTheme: ThemeConfig = {
     algorithm: darkAlgorithm,
     token: {
         ...lightTheme.token,
-        // 背景色调整为暗色
-        colorBgContainer: '#161618',
-        colorBgLayout: '#070707',
-        colorBgElevated: '#1b1c22',
+        // 背景色调整为更深的黑色
+        colorBgContainer: '#0f0f0f',
+        colorBgLayout: '#050505',
+        colorBgElevated: '#1a1a1a',
 
         // 文字颜色调整
-        colorText: '#f5f5f5',
-        colorTextSecondary: '#9a9cae',
-        colorTextTertiary: '#808290',
-        colorTextQuaternary: '#636674',
+        colorText: '#f0f0f0',
+        colorTextSecondary: '#9a9ca8',
+        colorTextTertiary: '#75777e',
+        colorTextQuaternary: '#5a5c63',
 
-        // 边框颜色调整
-        colorBorder: '#26272f',
-        colorBorderSecondary: '#363843',
+        // 边框颜色调整为更深的灰色
+        colorBorder: '#2a2a2a',
+        colorBorderSecondary: '#333333',
     },
     components: {
         ...lightTheme.components,
         Table: {
             ...lightTheme.components?.Table,
-            headerBg: '#1b1c22',
-            headerColor: '#9a9cae',
-            rowHoverBg: '#26272f',
+            headerBg: '#1a1a1a',
+            headerColor: '#9a9ca8',
+            rowHoverBg: '#2a2a2a',
+        },
+        Card: {
+            ...lightTheme.components?.Card,
+            // 为暗色模式添加边框
+            colorBorderSecondary: '#333333',
         },
     },
 };

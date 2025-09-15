@@ -35,6 +35,23 @@ const Breadcrumb: React.FC = () => {
         addBreadcrumb(currentPath);
     }, [location.pathname, addBreadcrumb]);
 
+    // 监听面包屑导航事件
+    useEffect(() => {
+        const handleBreadcrumbNavigate = (event: CustomEvent) => {
+            const { path } = event.detail;
+            navigate(path);
+        };
+
+        window.addEventListener('breadcrumb-navigate', handleBreadcrumbNavigate as EventListener);
+
+        return () => {
+            window.removeEventListener(
+                'breadcrumb-navigate',
+                handleBreadcrumbNavigate as EventListener,
+            );
+        };
+    }, [navigate]);
+
     // 处理面包屑点击
     const handleBreadcrumbClick = (path: string) => {
         setActiveBreadcrumb(path);
@@ -71,7 +88,6 @@ const Breadcrumb: React.FC = () => {
                 icon: <ClearOutlined />,
                 onClick: () => {
                     clearAllBreadcrumbs();
-                    navigate('/dashboard/console');
                 },
             },
         ],
@@ -90,7 +106,7 @@ const Breadcrumb: React.FC = () => {
                     transition-all duration-200 border
                     ${
                         isActive
-                            ? 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300'
+                            ? 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100'
                             : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
                     }
                 `}
@@ -131,7 +147,7 @@ const Breadcrumb: React.FC = () => {
     }));
 
     return (
-        <div className="bg-white dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-black px-4 py-2 border-b border-gray-300 dark:border-gray-800 overflow-hidden shadow-sm">
             <div className="flex items-center space-x-1">
                 {/* 显示的面包屑项 */}
                 {visibleItems.map((item) => (
@@ -165,7 +181,6 @@ const Breadcrumb: React.FC = () => {
                         className="ml-2 text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
                         onClick={() => {
                             clearAllBreadcrumbs();
-                            navigate('/dashboard/console');
                         }}
                         title="清除所有历史记录"
                     />

@@ -96,7 +96,10 @@ const Banner: React.FC = () => {
 // 总订单量组件
 const TotalOrderVolume: React.FC = () => {
     return (
-        <Card className="h-52" style={{ height: '100%', padding: '20px' }}>
+        <Card
+            className="h-52 border border-gray-200 dark:border-gray-700"
+            style={{ height: '100%', padding: '20px' }}
+        >
             <div className="text-center mb-5">
                 <p className="text-2xl font-semibold text-gray-800 dark:text-gray-200 m-0">
                     205,216
@@ -106,7 +109,7 @@ const TotalOrderVolume: React.FC = () => {
             <div className="flex justify-center items-center h-32">
                 <div className="space-y-2">
                     <div className="flex items-center mb-2">
-                        <span className="w-3 h-3 bg-blue-500 rounded-sm mr-2" />
+                        <span className="w-3 h-3 bg-gray-500 rounded-sm mr-2" />
                         <span className="text-xs text-gray-600 dark:text-gray-400">
                             已完成 (30%)
                         </span>
@@ -132,7 +135,10 @@ const TotalOrderVolume: React.FC = () => {
 // 商品总数组件
 const TotalProducts: React.FC = () => {
     return (
-        <Card className="h-52" style={{ height: '100%', padding: '20px' }}>
+        <Card
+            className="h-52 border border-gray-200 dark:border-gray-700"
+            style={{ height: '100%', padding: '20px' }}
+        >
             <div className="text-center mb-5">
                 <p className="text-2xl font-semibold text-gray-800 dark:text-gray-200 m-0">
                     55,231
@@ -143,7 +149,7 @@ const TotalProducts: React.FC = () => {
                 {[50, 80, 40, 90, 60, 70].map((height) => (
                     <div
                         key={`bar-${height}-${Math.random()}`}
-                        className="w-4 bg-gradient-to-t from-blue-500 to-blue-400 dark:from-blue-600 dark:to-blue-500 rounded-t hover:from-blue-600 hover:to-blue-500 dark:hover:from-blue-700 dark:hover:to-blue-600 transition-colors"
+                        className="w-4 bg-gradient-to-t from-gray-500 to-gray-400 dark:from-gray-600 dark:to-gray-500 rounded-t hover:from-gray-600 hover:to-gray-500 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-colors"
                         style={{ height: `${height}%` }}
                     />
                 ))}
@@ -155,7 +161,11 @@ const TotalProducts: React.FC = () => {
 // 销售趋势组件
 const SalesTrend: React.FC = () => {
     return (
-        <Card title="销售趋势" extra={<LineChartOutlined />}>
+        <Card
+            title="销售趋势"
+            extra={<LineChartOutlined />}
+            className="border border-gray-200 dark:border-gray-700"
+        >
             <Statistic
                 title="本月销售额"
                 value={112893}
@@ -172,7 +182,7 @@ const SalesTrend: React.FC = () => {
 // 销售分类组件
 const SalesClassification: React.FC = () => {
     return (
-        <Card title="销售分类">
+        <Card title="销售分类" className="border border-gray-200 dark:border-gray-700">
             <div className="space-y-4">
                 <div>
                     <span className="block mb-2 text-sm text-gray-600 dark:text-gray-400">
@@ -207,7 +217,11 @@ const HotCommodity: React.FC = () => {
     ];
 
     return (
-        <Card title="热门商品" extra={<TrophyOutlined />}>
+        <Card
+            title="热门商品"
+            extra={<TrophyOutlined />}
+            className="border border-gray-200 dark:border-gray-700"
+        >
             <div className="space-y-3">
                 {products.map((product, productIndex) => (
                     <div
@@ -260,7 +274,7 @@ const RecentTransaction: React.FC = () => {
     };
 
     return (
-        <Card title="近期交易">
+        <Card title="近期交易" className="border border-gray-200 dark:border-gray-700">
             <div className="space-y-3">
                 {transactions.map((transaction) => (
                     <div
