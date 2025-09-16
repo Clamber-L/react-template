@@ -8,7 +8,7 @@ export const mockRouteTree: DynamicRoute[] = [
     {
         id: 'dashboard',
         path: '/dashboard',
-        component: 'MainLayout',
+        component: 'Dashboard',
         name: 'Dashboard',
         enabled: true,
         createTime: '2024-01-01T00:00:00Z',
@@ -58,7 +58,7 @@ export const mockRouteTree: DynamicRoute[] = [
     {
         id: 'components',
         path: '/components',
-        component: 'MainLayout',
+        component: 'ComponentsBasic',
         name: 'Components',
         enabled: true,
         createTime: '2024-01-01T00:00:00Z',
@@ -124,7 +124,7 @@ export const mockRouteTree: DynamicRoute[] = [
     {
         id: 'templates',
         path: '/templates',
-        component: 'MainLayout',
+        component: 'WorkInProgressPage',
         name: 'Templates',
         enabled: true,
         createTime: '2024-01-01T00:00:00Z',

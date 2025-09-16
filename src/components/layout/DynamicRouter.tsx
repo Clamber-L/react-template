@@ -4,7 +4,7 @@ import { Spin, Button } from 'antd';
 
 import { useAuth } from '@/stores/useAuthStore';
 import { getComponent } from '@/lib';
-import { getMockRoutes, isPathAllowed } from '@/config';
+import { getMockRoutes, isPathAllowed } from '@/mock/routeData';
 import { DynamicRoute } from '@/types/route';
 
 /**
@@ -83,7 +83,7 @@ export const DynamicRouter = () => {
     console.log('- Available routes:', routes);
 
     // 递归构建路由组件
-    const buildRoutes = (routeList: DynamicRoute[], parentPath = ''): JSX.Element[] => {
+    const buildRoutes = (routeList: DynamicRoute[]): JSX.Element[] => {
         return routeList
             .filter((route) => route.enabled)
             .map((route) => {
@@ -94,86 +94,123 @@ export const DynamicRouter = () => {
                     return null;
                 }
 
-                // 计算相对路径
-                const relativePath = parentPath
-                    ? route.path.replace(parentPath, '').replace(/^\//, '')
-                    : route.path;
-
                 // 如果有子路由，则构建嵌套路由
                 if (route.children && route.children.length > 0) {
                     return (
-                        <Route key={route.id} path={`${relativePath}/*`} element={<Component />}>
-                            {buildRoutes(route.children, route.path)}
-                            {/* 默认子路由重定向 */}
-                            <Route
-                                index
-                                element={
-                                    <Navigate
-                                        to={
-                                            route.children
-                                                .find((child) => child.enabled)
-                                                ?.path.replace(route.path, '')
-                                                .replace(/^\//, '') || ''
-                                        }
-                                        replace
-                                    />
-                                }
-                            />
+                        <Route key={route.id} path={route.path} element={<Component />}>
+                            {buildRoutes(route.children)}
                         </Route>
                     );
                 }
 
                 // 叶子路由
-                return <Route key={route.id} path={relativePath} element={<Component />} />;
+                return <Route key={route.id} path={route.path} element={<Component />} />;
             })
             .filter(Boolean) as JSX.Element[];
     };
 
+    // 获取MainLayout组件
+    const MainLayout = getComponent('MainLayout');
+
     return (
         <Routes>
-            {/* 动态生成的路由 */}
-            {buildRoutes(routes)}
+            {/* 根路径重定向到工作台 */}
+            <Route path="/" element={<Navigate to="/dashboard/console" replace />} />
 
-            {/* 404 页面 - 当访问不在路由树中的路径时显示 */}
-            <Route
-                path="*"
-                element={
-                    <div className="flex items-center justify-center h-screen">
-                        <div className="text-center max-w-md">
-                            <h1 className="text-6xl font-bold text-gray-300 mb-4">404</h1>
-                            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
-                                页面不存在
-                            </h2>
-                            <p className="text-gray-600 dark:text-gray-400 mb-2">
-                                您访问的页面不在系统允许的路由列表中
-                            </p>
-                            <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
-                                当前路径:{' '}
-                                <code className="bg-gray-100 px-2 py-1 rounded">{currentPath}</code>
-                            </p>
-                            <div className="space-y-2">
-                                <Button
-                                    type="primary"
-                                    onClick={() => {
-                                        window.location.href = '/dashboard/console';
-                                    }}
-                                >
-                                    返回首页
-                                </Button>
-                                <br />
-                                <Button
-                                    type="link"
-                                    onClick={() => {
-                                        console.log('📋 允许的路由列表:', routes);
-                                    }}
-                                >
-                                    查看允许的路由
-                                </Button>
+            {/* 如果有MainLayout组件，则用它包装所有路由 */}
+            {MainLayout ? (
+                <Route path="/" element={<MainLayout />}>
+                    {buildRoutes(routes)}
+                    {/* 404 页面 - 当访问不在路由树中的路径时显示 */}
+                    <Route
+                        path="*"
+                        element={
+                            <div className="flex items-center justify-center h-screen">
+                                <div className="text-center max-w-md">
+                                    <h1 className="text-6xl font-bold text-gray-300 mb-4">404</h1>
+                                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+                                        页面不存在
+                                    </h2>
+                                    <p className="text-gray-600 dark:text-gray-400 mb-2">
+                                        您访问的页面不在系统允许的路由列表中
+                                    </p>
+                                    <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
+                                        当前路径:{' '}
+                                        <code className="bg-gray-100 px-2 py-1 rounded">
+                                            {currentPath}
+                                        </code>
+                                    </p>
+                                    <div className="space-y-2">
+                                        <Button
+                                            type="primary"
+                                            onClick={() => {
+                                                window.location.href = '/dashboard/console';
+                                            }}
+                                        >
+                                            返回首页
+                                        </Button>
+                                        <br />
+                                        <Button
+                                            type="link"
+                                            onClick={() => {
+                                                console.log('📋 允许的路由列表:', routes);
+                                            }}
+                                        >
+                                            查看允许的路由
+                                        </Button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                }
-            />
+                        }
+                    />
+                </Route>
+            ) : (
+                <>
+                    {buildRoutes(routes)}
+                    {/* 404 页面 - 当访问不在路由树中的路径时显示 */}
+                    <Route
+                        path="*"
+                        element={
+                            <div className="flex items-center justify-center h-screen">
+                                <div className="text-center max-w-md">
+                                    <h1 className="text-6xl font-bold text-gray-300 mb-4">404</h1>
+                                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+                                        页面不存在
+                                    </h2>
+                                    <p className="text-gray-600 dark:text-gray-400 mb-2">
+                                        您访问的页面不在系统允许的路由列表中
+                                    </p>
+                                    <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
+                                        当前路径:{' '}
+                                        <code className="bg-gray-100 px-2 py-1 rounded">
+                                            {currentPath}
+                                        </code>
+                                    </p>
+                                    <div className="space-y-2">
+                                        <Button
+                                            type="primary"
+                                            onClick={() => {
+                                                window.location.href = '/dashboard/console';
+                                            }}
+                                        >
+                                            返回首页
+                                        </Button>
+                                        <br />
+                                        <Button
+                                            type="link"
+                                            onClick={() => {
+                                                console.log('📋 允许的路由列表:', routes);
+                                            }}
+                                        >
+                                            查看允许的路由
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    />
+                </>
+            )}
         </Routes>
     );
 };

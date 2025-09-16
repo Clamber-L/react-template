@@ -18,7 +18,7 @@ import {
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import { getMockRoutes } from '@/config';
+import { getMockRoutes } from '@/mock/routeData';
 import { DynamicRoute } from '@/types/route';
 
 const { Sider } = Layout;

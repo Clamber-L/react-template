@@ -7,32 +7,9 @@ import { ROUTES } from './config';
 // 页面组件
 import Login from './pages/Login';
 
-/**
- * 根路径重定向组件
- * 根据用户登录状态决定跳转到登录页还是首页
- */
-const RootRedirect = () => {
-    const { isLogin } = useAuth();
-
-    console.log('🏠 RootRedirect: isLogin =', isLogin);
-
-    if (isLogin) {
-        console.log('✅ User logged in, redirecting to dashboard');
-        // 已登录，跳转到首页（工作台）
-        return <Navigate to="/dashboard/console" replace />;
-    }
-
-    console.log('❌ User not logged in, redirecting to login');
-    // 未登录，跳转到登录页
-    return <Navigate to="/login" replace />;
-};
-
 const App = () => {
     return (
         <Routes>
-            {/* 根路径重定向 */}
-            <Route path="/" element={<RootRedirect />} />
-
             {/* 公开路由 - 登录页 */}
             <Route
                 path={ROUTES.LOGIN}
@@ -52,7 +29,7 @@ const App = () => {
                 }
             />
 
-            {/* 其他所有路由都通过动态路由处理 */}
+            {/* 所有其他路由都通过动态路由处理，包括根路径 */}
             <Route path="/*" element={<DynamicRouter />} />
         </Routes>
     );
