@@ -89,7 +89,7 @@ const generateBreadcrumbItem = (path: string): BreadcrumbItem | null => {
     return null;
 };
 
-export const useBreadcrumbStore = create<BreadcrumbState>()(
+export const breadcrumbStore = create<BreadcrumbState>()(
     persist(
         (set, get) => ({
             breadcrumbHistory: [
@@ -226,7 +226,7 @@ export const useBreadcrumbStore = create<BreadcrumbState>()(
 
 // 导出选择器hook
 export const useBreadcrumb = () => {
-    const store = useBreadcrumbStore();
+    const store = breadcrumbStore();
     return {
         breadcrumbHistory: store.breadcrumbHistory,
         activeKey: store.activeKey,

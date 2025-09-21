@@ -1,5 +1,5 @@
 import { api } from '@/lib/request';
-import type { LoginParams, LoginResponse, UserInfo } from '@/stores/useAuthStore';
+import type { LoginParams, LoginResponse, UserInfo } from '@/stores/authStore';
 
 /**
  * 认证相关API服务

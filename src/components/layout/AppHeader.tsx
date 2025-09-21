@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
-import { useAuth } from '@/stores/useAuthStore';
+import { useAuth } from '@/stores/authStore';
 import { useTheme } from '@/providers/ThemeProvider';
 
 const { Header } = Layout;

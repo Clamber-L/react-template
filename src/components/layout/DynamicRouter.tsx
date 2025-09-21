@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Spin, Button } from 'antd';
 
-import { useAuth } from '@/stores/useAuthStore';
+import { useAuth } from '@/stores/authStore';
 import { getComponent } from '@/lib';
 import { getMockRoutes, isPathAllowed } from '@/mock/routeData';
 import { DynamicRoute } from '@/types/route';

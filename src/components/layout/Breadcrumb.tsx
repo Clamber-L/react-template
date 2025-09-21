@@ -10,7 +10,7 @@ import {
     ReloadOutlined,
 } from '@ant-design/icons';
 
-import { useBreadcrumb } from '@/stores/useBreadcrumbStore';
+import { useBreadcrumb } from '@/stores/breadcrumbStore';
 
 /**
  * 历史记录面包屑组件

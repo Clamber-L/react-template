@@ -11,7 +11,7 @@ import {
     LineChartOutlined,
 } from '@ant-design/icons';
 
-import { useAuth } from '@/stores/useAuthStore';
+import { useAuth } from '@/stores/authStore';
 
 // 计数动画组件
 const CountTo: React.FC<{

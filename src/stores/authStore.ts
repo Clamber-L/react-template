@@ -2,16 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { authApi } from '@/api/authApi';
-
-// 用户信息接口
-export interface UserInfo {
-    id: string;
-    username: string;
-    email: string;
-    avatar?: string;
-    roles: string[];
-    permissions: string[];
-}
+import { UserInfo } from '@/types/user';
 
 // 登录接口参数
 export interface LoginParams {
@@ -57,13 +48,12 @@ const getInitialState = () => ({
         username: 'demo',
         email: 'demo@example.com',
         roles: ['user', 'admin'], // 演示用户具有管理员权限
-        permissions: ['read', 'write', 'admin'],
     } as UserInfo,
     accessToken: 'demo-token',
     refreshToken: 'demo-refresh-token',
 });
 
-export const useAuthStore = create<AuthState>()(
+export const authStore = create<AuthState>()(
     persist(
         (set, get) => ({
             ...getInitialState(),
@@ -175,7 +165,7 @@ export const useAuthStore = create<AuthState>()(
 
 // 导出选择器hook
 export const useAuth = () => {
-    const store = useAuthStore();
+    const store = authStore();
     return {
         // 状态
         isLogin: store.isLogin,
