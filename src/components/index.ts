@@ -2,10 +2,6 @@
 export { default as AppHeader } from './layout/AppHeader';
 export { default as Sidebar } from './layout/Sidebar';
 export { default as Breadcrumb } from './layout/Breadcrumb';
-export { default as DynamicRouter } from './layout/DynamicRouter';
-
-// Auth Components
-export { default as AuthGuard, PublicRoute, PrivateRoute } from './auth/AuthGuard';
 
 // Demo Components
 export { default as AntdDemo } from './demo/AntdDemo';

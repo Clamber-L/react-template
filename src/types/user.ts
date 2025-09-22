@@ -1,3 +1,5 @@
+import { PermissionType } from '@/types/enum';
+
 export interface UserToken {
     accessToken?: string;
     refreshToken?: string;
@@ -20,9 +22,12 @@ export interface Permission {
     name: string;
     label: string;
     path: string;
-    resourceType: string;
+    sortValue: number;
+    resourceType: PermissionType;
+    frameSrc: string;
     icon?: string;
     component?: string;
     hide?: boolean;
+    disabled: boolean;
     children?: Permission[];
 }

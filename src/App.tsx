@@ -1,36 +1,11 @@
-import { Routes, Route } from 'react-router-dom';
-
-import { PublicRoute, DynamicRouter } from './components';
-import { ROUTES } from './config';
-
-// 页面组件
-import Login from './pages/Login';
+import { Router } from '@/router';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 
 const App = () => {
     return (
-        <Routes>
-            {/* 公开路由 - 登录页 */}
-            <Route
-                path={ROUTES.LOGIN}
-                element={
-                    <PublicRoute>
-                        <Login />
-                    </PublicRoute>
-                }
-            />
-            {/* 简化登录路由 */}
-            <Route
-                path="/login"
-                element={
-                    <PublicRoute>
-                        <Login />
-                    </PublicRoute>
-                }
-            />
-
-            {/* 所有其他路由都通过动态路由处理，包括根路径 */}
-            <Route path="/*" element={<DynamicRouter />} />
-        </Routes>
+        <ThemeProvider>
+            <Router />
+        </ThemeProvider>
     );
 };
 
