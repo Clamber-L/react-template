@@ -3,7 +3,6 @@ import { Navigate, RouteObject, RouterProvider, createHashRouter } from 'react-r
 
 import { usePermissionRoutes } from '@/hooks/use-permission-routes';
 import { AppRouteObject } from '@/types/router';
-import AuthGuard from '@/components/auth/AuthGuard';
 import ErrorRoute from '@/router/error-route';
 import MainLayout from '@/pages/MainLayout';
 
@@ -19,12 +18,14 @@ const PAGE_NOT_FOUND_ROUTE: AppRouteObject = {
 
 export const Router = () => {
     const permissionRoutes = usePermissionRoutes();
+    console.log('permissionRoutes', permissionRoutes);
     const asyncRoutes: AppRouteObject = {
         path: '/',
         element: (
-            <AuthGuard>
-                <MainLayout />
-            </AuthGuard>
+            // <AuthGuard>
+            //     <MainLayout />
+            // </AuthGuard>
+            <MainLayout />
         ),
         children: [
             { index: true, element: <Navigate to={HOMEPAGE} replace /> },
