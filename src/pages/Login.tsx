@@ -1,15 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-    Form,
-    Input,
-    Button,
-    Select,
-    Checkbox,
-    message,
-    notification,
-    Dropdown,
-    MenuProps,
-} from 'antd';
+import { Form, Input, Button, Select, Checkbox, Dropdown, MenuProps, App } from 'antd';
 import { GlobalOutlined, BulbOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
@@ -180,6 +170,7 @@ const Login: React.FC = () => {
     const [isPassing, setIsPassing] = useState(false);
     const [isClickPass, setIsClickPass] = useState(false);
     const [form] = Form.useForm<LoginFormData>();
+    const { message, notification } = App.useApp(); // 使用 App 上下文中的 message/notification
 
     // 预设账号配置
     const accounts: Account[] = [
