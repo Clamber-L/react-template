@@ -1,24 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Spin } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Layout } from 'antd';
 import type { MenuProps } from 'antd';
-import {
-    DashboardOutlined,
-    AppstoreOutlined,
-    LayoutOutlined,
-    BarChartOutlined,
-    SettingOutlined,
-    UserOutlined,
-    HomeOutlined,
-    BuildOutlined,
-    FormOutlined,
-    TableOutlined,
-    UnorderedListOutlined,
-    EditOutlined,
-    FileTextOutlined,
-} from '@ant-design/icons';
-import { useNavigate, useLocation } from 'react-router-dom';
 
-import { getMockRoutes } from '@/config';
+import { useNavigate, useLocation, useMatches } from 'react-router-dom';
+
+import { usePermissionRoutes } from '@/hooks/use-permission-routes';
+import { menuFilter } from '@/utils/tree';
 
 const { Sider } = Layout;
 
@@ -27,136 +14,33 @@ interface SidebarProps {
     onCollapse: (collapsed: boolean) => void;
 }
 
-// 图标映射
-const ICON_MAP = {
-    DashboardOutlined,
-    AppstoreOutlined,
-    LayoutOutlined,
-    BarChartOutlined,
-    SettingOutlined,
-    UserOutlined,
-    HomeOutlined,
-    BuildOutlined,
-    FormOutlined,
-    TableOutlined,
-    UnorderedListOutlined,
-    EditOutlined,
-    FileTextOutlined,
-} as const;
-
-// 获取图标组件
-const getIcon = (iconName?: string) => {
-    if (!iconName || !(iconName in ICON_MAP)) return null;
-    const IconComponent = ICON_MAP[iconName as keyof typeof ICON_MAP];
-    return <IconComponent />;
-};
-
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const matches = useMatches();
+    const [selectedKeys, setSelectedKeys] = useState<string[]>(['']);
     const [openKeys, setOpenKeys] = useState<string[]>([]);
-    const [routes, setRoutes] = useState<DynamicRoute[]>([]);
-    const [loading, setLoading] = useState(true);
+    const permissionRoutes = usePermissionRoutes();
 
-    // 获取动态路由数据
-    useEffect(() => {
-        const fetchRoutes = async () => {
-            try {
-                const routeData = await getMockRoutes();
-                setRoutes(routeData);
-                console.log('📋 Sidebar: 获取路由数据成功', routeData);
-            } catch (error) {
-                console.error('❌ Sidebar: 获取路由数据失败', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchRoutes();
-    }, []);
-
-    const handleMenuClick = ({ key }: { key: string }) => {
+    const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
         navigate(key);
     };
 
-    // 递归构建菜单项
-    const buildMenuItems = (menuItems: DynamicRoute[]): MenuProps['items'] => {
-        return menuItems
-            .filter((menuItem) => menuItem.enabled && !menuItem.meta.hideInMenu)
-            .map((menuItem) => {
-                const { meta, children, path, id } = menuItem;
-
-                if (children && children.length > 0) {
-                    const childItems = buildMenuItems(children)?.filter(Boolean) || [];
-                    if (childItems.length === 0) return null;
-
-                    return {
-                        key: id,
-                        icon: getIcon(meta?.icon),
-                        label: meta?.title,
-                        children: childItems,
-                    };
-                }
-
-                return {
-                    key: path,
-                    icon: getIcon(meta?.icon),
-                    label: meta?.title,
-                };
-            })
-            .filter(Boolean);
-    };
-
-    const menuItems = buildMenuItems(routes);
-
-    // 获取当前选中的菜单项
-    const getSelectedKeys = () => {
-        const { pathname } = location;
-        return [pathname];
-    };
-
-    // 获取默认展开的菜单项
-    const getDefaultOpenKeys = () => {
-        const { pathname } = location;
-        const openKeysArray: string[] = [];
-
-        // 查找匹配的父菜单
-        const findParentKeys = (items: DynamicRoute[], currentPath: string) => {
-            for (const item of items) {
-                if (item.children) {
-                    const hasMatchingChild = item.children.some((child: DynamicRoute) =>
-                        currentPath.startsWith(child.path),
-                    );
-                    if (hasMatchingChild) {
-                        openKeysArray.push(item.id);
-                    }
-                    findParentKeys(item.children, currentPath);
-                }
-            }
-        };
-
-        findParentKeys(routes, pathname);
-        return openKeysArray;
-    };
-
     // 初始化展开的菜单项
-    React.useEffect(() => {
-        if (routes.length > 0) {
-            const defaultKeys = getDefaultOpenKeys();
-            setOpenKeys(defaultKeys);
-        }
-    }, [location.pathname, routes]);
+    useEffect(() => {
+        const openKey = matches
+            .filter((match) => match.pathname !== '/')
+            .map((match) => match.pathname);
+        setOpenKeys(openKey);
+        setSelectedKeys([location.pathname]);
+    }, [location.pathname, collapsed, matches]);
 
-    // 处理菜单展开/收起 - 手风琴模式
-    const handleOpenChange = (keys: string[]) => {
-        const latestOpenKey = keys.find((key) => !openKeys.includes(key));
-        if (latestOpenKey) {
-            // 如果是展开操作，只保留当前展开的菜单项
-            setOpenKeys([latestOpenKey]);
-        } else {
-            // 如果是收起操作，移除对应的菜单项
-            setOpenKeys(keys);
-        }
-    };
+    useEffect(() => {
+        const menuRoutes = menuFilter(permissionRoutes);
+        console.log('menuRoutes: ', menuRoutes);
+        // const menus = routeToMenuFn(menuRoutes);
+        // setMenuList(menus);
+    }, [permissionRoutes]);
 
     return (
         <Sider
@@ -181,22 +65,16 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
             </div>
 
             {/* 菜单区域 */}
-            {loading ? (
-                <div className="flex justify-center items-center h-32">
-                    <Spin size="small" />
-                </div>
-            ) : (
-                <Menu
-                    mode="inline"
-                    selectedKeys={getSelectedKeys()}
-                    openKeys={openKeys}
-                    onOpenChange={handleOpenChange}
-                    onClick={handleMenuClick}
-                    className="border-none bg-transparent"
-                    theme="light"
-                    items={menuItems}
-                />
-            )}
+            {/* <Menu */}
+            {/*     mode="inline" */}
+            {/*     selectedKeys={[location.pathname]} */}
+            {/*     openKeys={openKeys} */}
+            {/*     onOpenChange={setOpenKeys} */}
+            {/*     onClick={handleMenuClick} */}
+            {/*     className="border-none bg-transparent" */}
+            {/*     theme="light" */}
+            {/*     items={items} */}
+            {/* /> */}
         </Sider>
     );
 };

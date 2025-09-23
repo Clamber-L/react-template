@@ -1,10 +1,8 @@
-import { DynamicRoute } from '@/types/route';
-
 /**
  * 模拟的动态路由数据
  * 在实际项目中，这些数据应该从数据库获取
  */
-export const mockRoutes: DynamicRoute[] = [
+export const mockRoutes = [
     {
         id: 'layout',
         path: '/',
@@ -336,81 +334,3 @@ export const mockRoutes: DynamicRoute[] = [
         ],
     },
 ];
-
-/**
- * 根据用户角色过滤路由
- */
-export const filterRoutesByRoles = (
-    routes: DynamicRoute[],
-    userRoles: string[],
-): DynamicRoute[] => {
-    return routes
-        .filter((route) => {
-            // 检查是否启用
-            if (!route.enabled) return false;
-
-            // 检查权限
-            if (route.meta.roles && route.meta.roles.length > 0) {
-                return route.meta.roles.some((role) => userRoles.includes(role));
-            }
-            return true;
-        })
-        .map((route) => ({
-            ...route,
-            children: route.children ? filterRoutesByRoles(route.children, userRoles) : undefined,
-        }));
-};
-
-/**
- * Mock API - 模拟获取路由数据的API调用
- */
-export const getMockRoutes = (): Promise<DynamicRoute[]> => {
-    return new Promise((resolve) => {
-        // 模拟网络延迟
-        setTimeout(() => {
-            console.log('📋 Mock API: 获取路由数据', mockRoutes);
-            resolve(mockRoutes);
-        }, 300);
-    });
-};
-
-/**
- * 检查路径是否在允许的路由树中
- */
-export const isPathAllowed = (path: string, routes: DynamicRoute[] = mockRoutes): boolean => {
-    for (const route of routes) {
-        // 检查当前路由
-        if (route.path === path && route.enabled) {
-            return true;
-        }
-
-        // 递归检查子路由
-        if (route.children) {
-            if (isPathAllowed(path, route.children)) {
-                return true;
-            }
-        }
-    }
-    return false;
-};
-
-/**
- * 获取所有允许的路径列表
- */
-export const getAllowedPaths = (routes: DynamicRoute[] = mockRoutes): string[] => {
-    const paths: string[] = [];
-
-    const collectPaths = (routeList: DynamicRoute[]) => {
-        routeList.forEach((route) => {
-            if (route.enabled) {
-                paths.push(route.path);
-            }
-            if (route.children) {
-                collectPaths(route.children);
-            }
-        });
-    };
-
-    collectPaths(routes);
-    return paths;
-};

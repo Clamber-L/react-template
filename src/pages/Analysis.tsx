@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Row, Col, Statistic } from 'antd';
 import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 
-const AnalysisPage: React.FC = () => {
+const Analysis: React.FC = () => {
     return (
         <div className="space-y-6">
             <div>
@@ -98,4 +98,4 @@ const AnalysisPage: React.FC = () => {
     );
 };
 
-export default AnalysisPage;
+export default Analysis;
