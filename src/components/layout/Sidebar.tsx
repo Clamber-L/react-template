@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Layout } from 'antd';
+import { Layout, Menu } from 'antd';
 import type { MenuProps } from 'antd';
 
 import { useNavigate, useLocation, useMatches } from 'react-router-dom';
 
+import { ItemType } from 'antd/lib/menu/interface';
+
 import { usePermissionRoutes } from '@/hooks/use-permission-routes';
-import { menuFilter } from '@/utils/tree';
+import { buildMenuItems, menuFilter } from '@/utils/tree';
 
 const { Sider } = Layout;
 
@@ -21,10 +23,58 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
     const [selectedKeys, setSelectedKeys] = useState<string[]>(['']);
     const [openKeys, setOpenKeys] = useState<string[]>([]);
     const permissionRoutes = usePermissionRoutes();
+    const [menuList, setMenuList] = useState<ItemType[] | undefined>([]);
 
     const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
+        console.log('permissionRoutes: ', permissionRoutes);
+        console.log('key: ', key);
         navigate(key);
     };
+
+    //
+    // const menuItems = buildMenuItems(routes);
+    // console.log('Menu items:', menuItems);
+    //
+    // // 获取默认展开的菜单项
+    // const getDefaultOpenKeys = () => {
+    //     const { pathname } = location;
+    //     const openKeysArray: string[] = [];
+    //
+    //     // 递归查找当前路径匹配的所有父级菜单
+    //     const findParentKeys = (items: AppRouteObject[]) => {
+    //         for (const item of items) {
+    //             // 如果当前项有子菜单
+    //             if (item.children && item.children.length > 0 && item.id) {
+    //                 // 检查当前项的任何子项是否应该被选中
+    //                 const isChildActive = item.children.some(child => {
+    //                     if (child.path) {
+    //                         // 精确匹配
+    //                         if (child.path === pathname) {
+    //                             return true;
+    //                         }
+    //                         // 前缀匹配（确保是完整路径段）
+    //                         if (pathname.startsWith(child.path)) {
+    //                             const nextChar = pathname.charAt(child.path.length);
+    //                             return nextChar === '' || nextChar === '/';
+    //                         }
+    //                     }
+    //                     return false;
+    //                 });
+    //
+    //                 // 如果子项是激活的，则展开当前项
+    //                 if (isChildActive) {
+    //                     openKeysArray.push(item.id);
+    //                 }
+    //
+    //                 // 递归检查子项
+    //                 findParentKeys(item.children);
+    //             }
+    //         }
+    //     };
+    //
+    //     findParentKeys(routes);
+    //     return openKeysArray;
+    // };
 
     // 初始化展开的菜单项
     useEffect(() => {
@@ -37,9 +87,8 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
 
     useEffect(() => {
         const menuRoutes = menuFilter(permissionRoutes);
-        console.log('menuRoutes: ', menuRoutes);
-        // const menus = routeToMenuFn(menuRoutes);
-        // setMenuList(menus);
+        const menus = buildMenuItems(menuRoutes);
+        setMenuList(menus);
     }, [permissionRoutes]);
 
     return (
@@ -65,16 +114,17 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
             </div>
 
             {/* 菜单区域 */}
-            {/* <Menu */}
-            {/*     mode="inline" */}
-            {/*     selectedKeys={[location.pathname]} */}
-            {/*     openKeys={openKeys} */}
-            {/*     onOpenChange={setOpenKeys} */}
-            {/*     onClick={handleMenuClick} */}
-            {/*     className="border-none bg-transparent" */}
-            {/*     theme="light" */}
-            {/*     items={items} */}
-            {/* /> */}
+            <Menu
+                mode="inline"
+                selectedKeys={selectedKeys}
+                openKeys={openKeys}
+                onOpenChange={setOpenKeys}
+                defaultSelectedKeys={['/dashboard-console']}
+                onClick={handleMenuClick}
+                className="border-none bg-transparent"
+                theme="light"
+                items={menuList}
+            />
         </Sider>
     );
 };

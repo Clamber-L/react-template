@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Layout } from 'antd';
 import { Outlet } from 'react-router-dom';
 
+import { Sidebar } from '@/components';
+
 import { AppHeader } from '../components';
-import { Breadcrumb, Sidebar } from '@/components';
 
 const { Content } = Layout;
 
@@ -16,7 +17,7 @@ const MainLayout: React.FC = () => {
             <Layout>
                 <AppHeader collapsed={collapsed} onCollapse={setCollapsed} />
                 {/* 面包屑导航 */}
-                <Breadcrumb />
+                {/* <Breadcrumb /> */}
                 <Content className="bg-gray-100 dark:bg-gray-900 transition-colors">
                     <div className="p-6">
                         <Outlet />
