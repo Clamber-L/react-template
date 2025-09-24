@@ -11,6 +11,8 @@ import {
 } from '@ant-design/icons';
 
 import { useBreadcrumb } from '@/stores/breadcrumbStore';
+import { useBreadcrumbItems } from '@/hooks';
+import { HOMEPAGE } from '@/router';
 
 /**
  * 历史记录面包屑组件
@@ -19,6 +21,8 @@ import { useBreadcrumb } from '@/stores/breadcrumbStore';
 const Breadcrumb: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const breadcrumbItems = useBreadcrumbItems();
+
     const {
         breadcrumbHistory,
         activeKey,
@@ -29,11 +33,20 @@ const Breadcrumb: React.FC = () => {
         removeOtherBreadcrumbs,
     } = useBreadcrumb();
 
-    // 监听路由变化，自动添加到历史记录
+    // 监听路由变化，添加到面包屑历史记录
     useEffect(() => {
-        const currentPath = location.pathname;
-        addBreadcrumb(currentPath);
-    }, [location.pathname, addBreadcrumb]);
+        // 当路由变化时，生成当前路径对应的面包屑项
+        const currentBreadcrumbItems = breadcrumbItems.filter((item: any) => {
+            // 只处理当前路径的项
+            return item.path === location.pathname;
+        });
+
+        // 添加当前页面到面包屑历史记录
+        if (currentBreadcrumbItems.length > 0) {
+            const currentItem = currentBreadcrumbItems[0];
+            addBreadcrumb(currentItem);
+        }
+    }, [location.pathname, breadcrumbItems, addBreadcrumb]);
 
     // 监听面包屑导航事件
     useEffect(() => {
@@ -42,9 +55,11 @@ const Breadcrumb: React.FC = () => {
             navigate(path);
         };
 
+        // 添加事件监听器
         window.addEventListener('breadcrumb-navigate', handleBreadcrumbNavigate as EventListener);
 
         return () => {
+            // 清理事件监听器
             window.removeEventListener(
                 'breadcrumb-navigate',
                 handleBreadcrumbNavigate as EventListener,
@@ -80,7 +95,7 @@ const Breadcrumb: React.FC = () => {
                 label: '关闭其他',
                 icon: <ClearOutlined />,
                 onClick: () => removeOtherBreadcrumbs(itemKey),
-                disabled: itemKey === '/dashboard/console',
+                disabled: itemKey === HOMEPAGE,
             },
             {
                 key: 'close-all',
@@ -96,7 +111,7 @@ const Breadcrumb: React.FC = () => {
     // 渲染面包屑项
     const renderBreadcrumbItem = (item: any) => {
         const isActive = activeKey === item.key;
-        const isHome = item.key === '/dashboard/console';
+        const isHome = item.key === HOMEPAGE;
 
         return (
             <div

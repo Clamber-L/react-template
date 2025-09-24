@@ -1,6 +1,6 @@
 import React, { lazy, Suspense, useMemo } from 'react';
 
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useMatches } from 'react-router-dom';
 
 import { useUserPermission } from '@/stores/userStore';
 import { flattenTrees } from '@/utils/tree';
@@ -36,106 +36,55 @@ export const usePermissionRoutes = () => {
     }, [permissions]);
 };
 
-// const transformPermissionToMenuRoutes = (
-//     permissions: Permission[],
-//     flattenedPermissions: Permission[],
-// ) => {
-//     return permissions.map((permission) => {
-//         const {
-//             path,
-//             resourceType,
-//             label,
-//             icon,
-//             sortValue,
-//             hide,
-//             frameSrc,
-//             component,
-//             parentId,
-//             disabled,
-//             children = [],
-//         } = permission;
-//
-//         const appRoute: AppRouteObject = {
-//             path,
-//             meta: {
-//                 label,
-//                 key: getCompleteRoute(permission, flattenedPermissions),
-//                 hideMenu: !!hide,
-//                 disabled,
-//             },
-//         };
-//
-//         if (sortValue) appRoute.sortValue = sortValue;
-//         if (icon) appRoute.meta!.icon = icon;
-//         if (frameSrc) appRoute.meta!.frameSrc = frameSrc;
-//
-//         if (resourceType === PermissionType.CATALOGUE) {
-//             appRoute.meta!.hideTab = true;
-//             if (!parentId) {
-//                 appRoute.element = (
-//                     <Suspense fallback={<CircleLoading />}>
-//                         <Outlet />
-//                     </Suspense>
-//                 );
-//             }
-//             appRoute.children = transformPermissionToMenuRoutes(children, flattenedPermissions);
-//             if (children && children.length > 0 && children[0].path) {
-//                 appRoute.children.unshift({
-//                     index: true,
-//                     element: <Navigate to={children[0].path} replace />,
-//                 });
-//             }
-//         } else if (resourceType === PermissionType.MENU) {
-//             // 确保 component 存在
-//             if (component) {
-//                 const componentResolver = resolveComponent(component);
-//
-//                 // 添加检查确保 componentResolver 存在且是一个函数
-//                 if (componentResolver && typeof componentResolver === 'function') {
-//                     const Element = lazy(
-//                         componentResolver as () => Promise<{ default: React.ComponentType<any> }>,
-//                     );
-//                     if (frameSrc) {
-//                         appRoute.element = <Element src={frameSrc} />;
-//                     } else {
-//                         appRoute.element = <Element />;
-//                     }
-//                 } else {
-//                     // 如果找不到组件或不是函数，提供一个默认的错误组件
-//                     appRoute.element = (
-//                         <div>Error: Component not found or invalid - {component}</div>
-//                     );
-//                 }
-//             } else {
-//                 // 如果没有指定 component，提供一个默认的错误组件
-//                 appRoute.element = <div>Error: No component specified</div>;
-//             }
-//         }
-//
-//         return appRoute;
-//     });
-// };
+// 根据当前路径获取面包屑信息
+export const useBreadcrumbItems = () => {
+    const matches = useMatches();
+    const permissionRoutes = usePermissionRoutes();
 
-// const getCompleteRoute = (permission: Permission, flattenedPermissions: Permission[]): string => {
-//     // 对于子路由，我们需要构建完整的路径
-//     if (permission.parentId) {
-//         const parentPermission = flattenedPermissions.find((p) => p.id === permission.parentId);
-//         if (parentPermission) {
-//             // 递归获取父级完整路径
-//             const parentPath: string = getCompleteRoute(parentPermission, flattenedPermissions);
-//             // 组合路径，确保正确的分隔符
-//             // 如果父路径是根路径，特殊处理
-//             if (parentPath === '/') {
-//                 return `/${permission.path}`;
-//             }
-//             // 否则，组合父路径和当前路径
-//             return `${parentPath}${permission.path}`;
-//         }
-//     }
-//
-//     // 根路径或没有父级的路径
-//     return permission.path || '/';
-// };
+    return useMemo(() => {
+        // 根据匹配的路由生成面包屑
+
+        return matches
+            .filter((match) => match.pathname !== '/') // 过滤掉根路径
+            .map((match) => {
+                // 在权限路由中查找匹配的路由项
+                const findRoute = (routes: AppRouteObject[]): AppRouteObject | undefined => {
+                    for (const route of routes) {
+                        // 精确匹配路径
+                        if (route.path === match.pathname && route.meta?.label) {
+                            return route;
+                        }
+
+                        // 如果有子路由，递归查找
+                        if (route.children) {
+                            const found = findRoute(route.children);
+                            if (found) return found;
+                        }
+                    }
+                    return undefined;
+                };
+
+                const route = findRoute(permissionRoutes);
+                if (route && route.meta && route.meta.label) {
+                    // 只有二级以下的页面才添加到面包屑中（排除顶级父级页面）
+                    const pathSegments = (route.path || match.pathname)
+                        .split('/')
+                        .filter((segment) => segment.length > 0);
+                    if (pathSegments.length > 1) {
+                        return {
+                            key: route.path || match.pathname,
+                            title: route.meta.label || '',
+                            path: route.path || match.pathname,
+                            icon: route.meta.icon as string,
+                        };
+                    }
+                }
+
+                return null;
+            })
+            .filter(Boolean) as { key: string; title: string; path: string; icon?: string }[];
+    }, [matches, permissionRoutes]);
+};
 
 const transformPermissionToMenuRoutes = (
     permissions: Permission[],

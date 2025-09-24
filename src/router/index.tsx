@@ -6,7 +6,7 @@ import { AppRouteObject } from '@/types/router';
 import ErrorRoute from '@/router/error-route';
 import MainLayout from '@/pages/MainLayout';
 
-const { VITE_APP_HOMEPAGE: HOMEPAGE } = import.meta.env;
+export const { VITE_APP_HOMEPAGE: HOMEPAGE } = import.meta.env;
 const LoginRoute: AppRouteObject = {
     path: '/login',
     Component: lazy(() => import('@/pages/Login')),

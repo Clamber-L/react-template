@@ -26,8 +26,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
     const [menuList, setMenuList] = useState<ItemType[] | undefined>([]);
 
     const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
-        console.log('permissionRoutes: ', permissionRoutes);
-        console.log('key: ', key);
         navigate(key);
     };
 
@@ -119,7 +117,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
                 selectedKeys={selectedKeys}
                 openKeys={openKeys}
                 onOpenChange={setOpenKeys}
-                defaultSelectedKeys={['/dashboard-console']}
+                defaultSelectedKeys={['/dashboard/dashboard-console']}
                 onClick={handleMenuClick}
                 className="border-none bg-transparent"
                 theme="light"
