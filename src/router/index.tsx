@@ -5,6 +5,7 @@ import { usePermissionRoutes } from '@/hooks/use-permission-routes';
 import { AppRouteObject } from '@/types/router';
 import ErrorRoute from '@/router/error-route';
 import MainLayout from '@/pages/MainLayout';
+import AuthGuard from '@/components/auth/AuthGuard';
 
 export const { VITE_APP_HOMEPAGE: HOMEPAGE } = import.meta.env;
 const LoginRoute: AppRouteObject = {
@@ -22,10 +23,9 @@ export const Router = () => {
     const asyncRoutes: AppRouteObject = {
         path: '/',
         element: (
-            // <AuthGuard>
-            //     <MainLayout />
-            // </AuthGuard>
-            <MainLayout />
+            <AuthGuard>
+                <MainLayout />
+            </AuthGuard>
         ),
         children: [
             { index: true, element: <Navigate to={HOMEPAGE} replace /> },

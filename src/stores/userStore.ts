@@ -31,5 +31,6 @@ export const useUserStore = create<UserStore>((set) => ({
 }));
 
 export const useUserInfo = () => useUserStore((state) => state.userInfo);
+export const useSetUserInfo = () => useUserStore((state) => state.setUserInfo);
 export const useUserPermission = () => useUserStore((state) => state.userInfo.permissions);
 export const useUserToken = () => useUserStore((state) => state.userToken);
