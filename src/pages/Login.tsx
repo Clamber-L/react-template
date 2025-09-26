@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/stores/authStore';
 import { useTheme } from '@/providers/ThemeProvider';
+import { HOMEPAGE } from '@/router';
 
 const { Option } = Select;
 
@@ -247,7 +248,7 @@ const Login: React.FC = () => {
             }, 150);
 
             // 跳转到仪表板
-            navigate('/');
+            navigate(HOMEPAGE);
         } catch (error) {
             console.error('登录失败:', error);
             message.error('登录失败，请检查用户名和密码');
