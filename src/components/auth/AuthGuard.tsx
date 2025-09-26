@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 
 import { useRouter } from '@/hooks/use-router';
-import { useUserToken } from '@/stores/userStore';
+import { useAuth } from '@/stores/authStore';
 
 type Props = {
     children: React.ReactNode;
@@ -9,7 +9,7 @@ type Props = {
 
 const AuthGuard = ({ children }: Props) => {
     const router = useRouter();
-    const { accessToken } = useUserToken();
+    const { accessToken } = useAuth();
 
     const check = useCallback(() => {
         if (!accessToken) {

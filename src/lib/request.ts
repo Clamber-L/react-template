@@ -46,8 +46,8 @@ class TokenManager {
 
     private loadTokensFromStorage() {
         if (typeof window !== 'undefined') {
-            this.token = localStorage.getItem('access_token');
-            this.refreshToken = localStorage.getItem('refresh_token');
+            this.token = localStorage.getItem('accessToken');
+            this.refreshToken = localStorage.getItem('refreshToken');
         }
     }
 

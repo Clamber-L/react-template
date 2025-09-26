@@ -3,8 +3,8 @@ import { Navigate, RouteObject, RouterProvider, createHashRouter } from 'react-r
 
 import { usePermissionRoutes } from '@/hooks/use-permission-routes';
 import { AppRouteObject } from '@/types/router';
-import ErrorRoute from '@/router/error-route';
-import MainLayout from '@/pages/MainLayout';
+import { ErrorRoutes } from '@/router/error-route';
+import MainLayout from '@/components/layout/MainLayout';
 import AuthGuard from '@/components/auth/AuthGuard';
 
 export const { VITE_APP_HOMEPAGE: HOMEPAGE } = import.meta.env;
@@ -33,7 +33,7 @@ export const Router = () => {
         ],
     };
 
-    const routes = [LoginRoute, asyncRoutes, ErrorRoute, PAGE_NOT_FOUND_ROUTE];
+    const routes = [LoginRoute, asyncRoutes, ErrorRoutes, PAGE_NOT_FOUND_ROUTE];
 
     const router = createHashRouter(routes as unknown as RouteObject[]);
     return <RouterProvider router={router} />;

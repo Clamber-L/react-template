@@ -2,13 +2,13 @@ import React, { lazy, Suspense, useMemo } from 'react';
 
 import { Navigate, Outlet, useMatches } from 'react-router-dom';
 
-import { useUserPermission } from '@/stores/userStore';
 import { flattenTrees } from '@/utils/tree';
 import { Permission } from '@/types/user';
 import { AppRouteObject } from '@/types/router';
 import { PermissionType } from '@/types/enum';
 import CircleLoading from '@/components/loading/CircleLoading';
 import { mockRouteTree } from '@/mock/routeData';
+import { useAuth } from '@/stores/authStore';
 
 const pages = import.meta.glob('/src/pages/**/*.tsx');
 
@@ -20,8 +20,9 @@ function resolveComponent(path: string) {
 }
 
 export const usePermissionRoutes = () => {
-    // const permissions = useUserPermission();
-    let permissions = useUserPermission();
+    let {
+        userInfo: { permissions },
+    } = useAuth();
 
     // 测试数据
     permissions = mockRouteTree;

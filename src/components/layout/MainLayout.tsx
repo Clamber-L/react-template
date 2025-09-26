@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 
 import { Breadcrumb, Sidebar } from '@/components';
 
-import { AppHeader } from '../components';
+import { AppHeader } from '../index';
 
 const { Content } = Layout;
 

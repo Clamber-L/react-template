@@ -1,6 +1,7 @@
 import { api } from '@/lib/request';
 import type { LoginParams, LoginResponse } from '@/stores/authStore';
 import { UserInfo } from '@/types/user';
+import { mockRouteTree } from '@/mock/routeData';
 
 /**
  * 认证相关API服务
@@ -111,26 +112,29 @@ export class MockAuthService {
             admin: {
                 id: '1',
                 username: 'admin',
+                account: 'admin',
                 email: 'admin@example.com',
                 avatar: 'https://avatars.githubusercontent.com/u/1?v=4',
                 roles: ['admin', 'super'],
-                permissions: ['*:*:*'],
+                permissions: mockRouteTree,
             },
             user: {
                 id: '2',
                 username: 'user',
+                account: 'user',
                 email: 'user@example.com',
                 avatar: 'https://avatars.githubusercontent.com/u/2?v=4',
                 roles: ['user'],
-                permissions: ['read:*:*'],
+                permissions: mockRouteTree,
             },
             demo: {
                 id: '3',
                 username: 'demo',
+                account: 'demo',
                 email: 'demo@example.com',
                 avatar: 'https://avatars.githubusercontent.com/u/3?v=4',
                 roles: ['guest'],
-                permissions: ['read:public:*'],
+                permissions: mockRouteTree,
             },
         };
 

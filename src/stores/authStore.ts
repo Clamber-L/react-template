@@ -23,7 +23,7 @@ interface AuthState {
     // 状态
     isLogin: boolean;
     loading: boolean;
-    userInfo: UserInfo | null;
+    userInfo: UserInfo;
     accessToken: string;
     refreshToken: string;
 
@@ -43,14 +43,9 @@ const getInitialState = () => ({
     // 在实际项目中应该设置为 false
     isLogin: true,
     loading: false,
-    userInfo: {
-        id: 'demo-user',
-        username: 'demo',
-        email: 'demo@example.com',
-        roles: ['user', 'admin'], // 演示用户具有管理员权限
-    } as UserInfo,
-    accessToken: 'demo-token',
-    refreshToken: 'demo-refresh-token',
+    userInfo: {} as UserInfo,
+    accessToken: '',
+    refreshToken: '',
 });
 
 export const authStore = create<AuthState>()(

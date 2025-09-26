@@ -10,10 +10,9 @@ export interface UserInfo {
     username: string;
     email: string;
     account: string;
-    password: string;
     avatar: string;
     roles: string[];
-    permissions?: Permission[];
+    permissions: Permission[] | [];
 }
 
 export interface Permission {

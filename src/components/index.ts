@@ -4,9 +4,9 @@ export { default as Sidebar } from './layout/Sidebar';
 export { default as Breadcrumb } from './layout/Breadcrumb';
 
 // Demo Components
-export { default as AntdDemo } from './demo/AntdDemo';
-export { default as AntdFallback } from './demo/AntdFallback';
-export { default as SimpleAntdDemo } from './demo/SimpleAntdDemo';
+export { default as AntdDemo } from '../pages/AntdDemo';
+export { default as AntdFallback } from '../pages/AntdFallback';
+export { default as SimpleAntdDemo } from '../pages/SimpleAntdDemo';
 
 // UI Components
 export { default as WorkInProgressPage } from './ui/WorkInProgressPage';
