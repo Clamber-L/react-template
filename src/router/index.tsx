@@ -19,7 +19,7 @@ const PAGE_NOT_FOUND_ROUTE: AppRouteObject = {
 
 export const Router = () => {
     const permissionRoutes = usePermissionRoutes();
-    console.log('permissionRoutes', permissionRoutes);
+    console.log('HOMEPAGE:', HOMEPAGE);
     const asyncRoutes: AppRouteObject = {
         path: '/',
         element: (

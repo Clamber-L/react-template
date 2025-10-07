@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Card, message, Modal, Tag, Table } from 'antd';
-import { PlusOutlined, ExpandOutlined, CompressOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+import { Button, Card, message, Modal, Table, Tag } from 'antd';
+import { CompressOutlined, ExpandOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 
 import type { Permission } from '@/types/user';
@@ -24,9 +24,10 @@ const MenuPage: React.FC = () => {
     const [tableData, setTableData] = useState<Permission[]>([]);
     const [filteredTableData, setFilteredTableData] = useState<Permission[]>([]);
     const [dialogVisible, setDialogVisible] = useState(false);
-    const [dialogType, setDialogType] = useState<'menu' | 'button'>('menu');
+    const [dialogType, setDialogType] = useState<'menu' | 'button' | 'catalogue'>('menu');
     const [editData, setEditData] = useState<Permission | null>(null);
     const [lockMenuType, setLockMenuType] = useState(false);
+    const [isFromCatalogue, setIsFromCatalogue] = useState(false);
     const [formFilters, setFormFilters] = useState({ name: '', route: '' });
     const [appliedFilters, setAppliedFilters] = useState({ name: '', route: '' });
     const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
@@ -85,6 +86,17 @@ const MenuPage: React.FC = () => {
             width: 180,
             render: (_, record) => (
                 <div style={{ textAlign: 'right' }}>
+                    {record.resourceType === PermissionType.CATALOGUE && (
+                        <Button
+                            type="link"
+                            size="small"
+                            onClick={() => {
+                                handleAddMenu(true);
+                            }}
+                        >
+                            新增
+                        </Button>
+                    )}
                     <Button type="link" size="small" onClick={() => handleEditMenu(record)}>
                         编辑
                     </Button>
@@ -100,6 +112,29 @@ const MenuPage: React.FC = () => {
             ),
         },
     ];
+
+    // 过滤数据
+    useEffect(() => {
+        // 简单的过滤逻辑，实际项目中可能需要更复杂的处理
+        const filtered = tableData.filter((item) => {
+            const nameMatch =
+                !appliedFilters.name || (item.label && item.label.includes(appliedFilters.name));
+            const routeMatch =
+                !appliedFilters.route || (item.path && item.path.includes(appliedFilters.route));
+            return nameMatch && routeMatch;
+        });
+        setFilteredTableData(filtered);
+
+        // 当数据过滤变化时，如果当前是展开状态，则更新展开的行
+        if (isExpanded) {
+            setExpandedRowKeys(getAllRowKeys(filtered));
+        }
+    }, [tableData, appliedFilters, isExpanded]);
+
+    // 组件挂载时获取数据
+    useEffect(() => {
+        getTableData().then();
+    }, []);
 
     // 获取表格数据
     const getTableData = async () => {
@@ -126,8 +161,8 @@ const MenuPage: React.FC = () => {
     };
 
     // 刷新处理
-    const handleRefresh = () => {
-        getTableData();
+    const handleRefresh = async () => {
+        await getTableData();
     };
 
     // 展开/收起处理
@@ -163,15 +198,19 @@ const MenuPage: React.FC = () => {
     };
 
     // 添加菜单
-    const handleAddMenu = () => {
+    const handleAddMenu = (fromCatalogue = false) => {
+        // 添加菜单只可以添加目录类型
         setDialogType('menu');
         setEditData(null);
-        setLockMenuType(true);
+        setLockMenuType(false);
         setDialogVisible(true);
+        // 保存是否从目录添加的状态，用于传递给对话框组件
+        setIsFromCatalogue(fromCatalogue);
     };
 
     // 编辑菜单
     const handleEditMenu = (record: Permission) => {
+        // 所有的编辑都不可以修改菜单类型
         setDialogType('menu');
         setEditData(record);
         setLockMenuType(true);
@@ -186,7 +225,7 @@ const MenuPage: React.FC = () => {
             onOk: async () => {
                 try {
                     message.success('删除成功');
-                    getTableData();
+                    await getTableData();
                 } catch (error) {
                     message.error('删除失败');
                 }
@@ -195,70 +234,55 @@ const MenuPage: React.FC = () => {
     };
 
     // 提交处理
-    const handleSubmit = (formData: any) => {
+    const handleSubmit = async (formData: any) => {
         console.log('提交数据:', formData);
         // 这里可以调用API保存数据
-        getTableData();
+        await getTableData();
         setDialogVisible(false);
     };
-
-    // 过滤数据
-    useEffect(() => {
-        // 简单的过滤逻辑，实际项目中可能需要更复杂的处理
-        const filtered = tableData.filter((item) => {
-            const nameMatch =
-                !appliedFilters.name || (item.label && item.label.includes(appliedFilters.name));
-            const routeMatch =
-                !appliedFilters.route || (item.path && item.path.includes(appliedFilters.route));
-            return nameMatch && routeMatch;
-        });
-        setFilteredTableData(filtered);
-
-        // 当数据过滤变化时，如果当前是展开状态，则更新展开的行
-        if (isExpanded) {
-            setExpandedRowKeys(getAllRowKeys(filtered));
-        }
-    }, [tableData, appliedFilters, isExpanded]);
-
-    // 组件挂载时获取数据
-    useEffect(() => {
-        getTableData();
-    }, []);
 
     return (
         <div className="menu-page" style={{ padding: '16px', height: '100%' }}>
             {/* 搜索栏 */}
-            <Card style={{ marginBottom: 16 }}>
+            <Card className="mb-4">
                 <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
                     <div>
-                        <label style={{ marginRight: 8 }}>菜单名称:</label>
+                        <label htmlFor="menuName" className="mr-2">
+                            菜单名称:
+                        </label>
                         <input
+                            id="menuName"
                             value={formFilters.name}
                             onChange={(e) =>
                                 setFormFilters({ ...formFilters, name: e.target.value })
                             }
                             placeholder="请输入菜单名称"
                             style={{
-                                width: 200,
+                                width: 180,
+                                height: '30px',
                                 padding: '4px 11px',
                                 border: '1px solid #d9d9d9',
-                                borderRadius: 4,
+                                borderRadius: 6,
                             }}
                         />
                     </div>
                     <div>
-                        <label style={{ marginRight: 8 }}>路由地址:</label>
+                        <label htmlFor="menuRoute" className="mr-2">
+                            路由地址:
+                        </label>
                         <input
+                            id="menuRoute"
                             value={formFilters.route}
                             onChange={(e) =>
                                 setFormFilters({ ...formFilters, route: e.target.value })
                             }
                             placeholder="请输入路由地址"
                             style={{
-                                width: 200,
+                                width: 180,
+                                height: '30px',
                                 padding: '4px 11px',
                                 border: '1px solid #d9d9d9',
-                                borderRadius: 4,
+                                borderRadius: 6,
                             }}
                         />
                     </div>
@@ -271,9 +295,13 @@ const MenuPage: React.FC = () => {
 
             <Card>
                 {/* 表格头部 */}
-                <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
+                <div className="flex mb-4 justify-between">
                     <div>
-                        <Button type="primary" icon={<PlusOutlined />} onClick={handleAddMenu}>
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={() => handleAddMenu(false)}
+                        >
                             添加菜单
                         </Button>
                         <Button
@@ -316,6 +344,7 @@ const MenuPage: React.FC = () => {
                     editData={editData}
                     type={dialogType}
                     lockType={lockMenuType}
+                    isFromCatalogue={isFromCatalogue}
                 />
             </Card>
         </div>

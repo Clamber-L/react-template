@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select, Checkbox, Dropdown, MenuProps, App } from 'antd';
 import { GlobalOutlined, BulbOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/stores/authStore';
 import { useTheme } from '@/providers/ThemeProvider';
 import { HOMEPAGE } from '@/router';
+import { authApi } from '@/api/authApi';
+import DragVerify from '@/components/dragVerify/DragVerify';
 
 const { Option } = Select;
 
@@ -81,92 +83,10 @@ const LoginLeftView: React.FC = () => {
     );
 };
 
-// 简化的拖拽验证组件
-const DragVerify: React.FC<{
-    value: boolean;
-    onChange: (passed: boolean) => void;
-    text: string;
-    successText: string;
-}> = ({ value, onChange, text, successText }) => {
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragPosition, setDragPosition] = useState(0);
-    const dragRef = useRef<HTMLDivElement>(null);
-
-    const handleMouseDown = (e: React.MouseEvent) => {
-        setIsDragging(true);
-        e.preventDefault();
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-        if (!isDragging || !dragRef.current) return;
-
-        const rect = dragRef.current.getBoundingClientRect();
-        const newPosition = Math.max(0, Math.min(e.clientX - rect.left - 20, rect.width - 40));
-        setDragPosition(newPosition);
-
-        // 如果拖拽到80%以上就算成功
-        if (newPosition > (rect.width - 40) * 0.8) {
-            onChange(true);
-            setIsDragging(false);
-        }
-    };
-
-    const handleMouseUp = () => {
-        setIsDragging(false);
-        if (!value) {
-            setDragPosition(0);
-        }
-    };
-
-    useEffect(() => {
-        if (isDragging) {
-            document.addEventListener('mousemove', handleMouseMove);
-            document.addEventListener('mouseup', handleMouseUp);
-        }
-        return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
-    }, [isDragging, value]);
-
-    return (
-        <div className="relative w-full h-10 rounded-md overflow-hidden select-none" ref={dragRef}>
-            <div
-                className={`relative w-full h-10 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center transition-all ${
-                    value
-                        ? 'bg-green-50 dark:bg-green-900 border border-green-300 dark:border-green-600'
-                        : ''
-                }`}
-            >
-                <div
-                    className="text-sm text-gray-500 dark:text-gray-400 transition-opacity"
-                    style={{ opacity: value ? 0 : 1 }}
-                >
-                    {text}
-                </div>
-                <div
-                    className="absolute text-sm text-green-500 dark:text-green-400 transition-opacity"
-                    style={{ opacity: value ? 1 : 0 }}
-                >
-                    {successText}
-                </div>
-                <div
-                    className="absolute left-0 top-0 w-10 h-10 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md flex items-center justify-center cursor-grab shadow-sm hover:border-gray-600 dark:hover:border-gray-400 hover:shadow-md transition-all active:cursor-grabbing"
-                    style={{
-                        transform: `translateX(${value ? (dragRef.current?.clientWidth || 0) - 40 : dragPosition}px)`,
-                    }}
-                    onMouseDown={handleMouseDown}
-                >
-                    {value ? '✓' : '→'}
-                </div>
-            </div>
-        </div>
-    );
-};
-
 const Login: React.FC = () => {
     const navigate = useNavigate();
-    const { login, loading } = useAuth();
+    const [loading, setLoading] = useState(false);
+    const { setState } = useAuth();
     const { toggleTheme } = useTheme();
     const [isPassing, setIsPassing] = useState(false);
     const [isClickPass, setIsClickPass] = useState(false);
@@ -231,12 +151,29 @@ const Login: React.FC = () => {
                 return;
             }
 
-            // 调用登录方法，它内部会处理API调用和状态设置
-            await login({
-                username: values.username,
-                password: values.password,
-                rememberPassword: values.rememberPassword,
-            });
+            setLoading(true);
+
+            try {
+                // 调用API服务
+                // 调用登录方法，它内部会处理API调用和状态设置
+                const response = await authApi.login({
+                    username: values.username,
+                    password: values.password,
+                    rememberPassword: values.rememberPassword,
+                });
+
+                // 设置登录状态 - 确保所有状态同时更新
+                setState({
+                    isLogin: true,
+                    accessToken: response.token,
+                    refreshToken: response.refreshToken || '',
+                    userInfo: response.userInfo,
+                    loading: false,
+                });
+            } catch (error) {
+                setLoading(false);
+                message.error('登录失败');
+            }
 
             // 显示成功提示
             setTimeout(() => {
@@ -247,8 +184,7 @@ const Login: React.FC = () => {
                 });
             }, 150);
 
-            // 跳转到仪表板
-            navigate(HOMEPAGE);
+            navigate(HOMEPAGE, { replace: true });
         } catch (error) {
             console.error('登录失败:', error);
             message.error('登录失败，请检查用户名和密码');

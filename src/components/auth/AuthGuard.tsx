@@ -9,19 +9,26 @@ type Props = {
 
 const AuthGuard = ({ children }: Props) => {
     const router = useRouter();
-    const { accessToken } = useAuth();
+    const { accessToken, isLogin } = useAuth();
 
     const check = useCallback(() => {
-        if (!accessToken) {
+        // 检查登录状态和token
+        if (!isLogin || !accessToken) {
+            console.log('未登录，重定向到登录页');
             router.replace('/login');
         }
-    }, [router, accessToken]);
+    }, [router, accessToken, isLogin]);
 
     useEffect(() => {
         check();
     }, [check]);
 
-    return children;
+    // 如果未登录，不渲染子组件
+    if (!isLogin || !accessToken) {
+        return null;
+    }
+
+    return <>{children}</>;
 };
 
 export default AuthGuard;

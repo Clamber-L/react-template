@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { authApi } from '@/api/authApi';
 import { UserInfo } from '@/types/user';
+import { PartialState } from '@/utils/storage';
 
 // 登录接口参数
 export interface LoginParams {
@@ -32,9 +32,9 @@ interface AuthState {
     setToken: (accessToken: string, refreshToken?: string) => void;
     setUserInfo: (userInfo: UserInfo) => void;
     setLoginStatus: (status: boolean) => void;
-    login: (params: LoginParams) => Promise<LoginResponse>;
     logout: () => void;
     clearAuth: () => void;
+    setState: (state: PartialState<AuthState>) => void;
 }
 
 // 获取存储的初始状态
@@ -76,30 +76,6 @@ export const authStore = create<AuthState>()(
                 set({ isLogin: status });
             },
 
-            // 登录方法
-            login: async (params: LoginParams): Promise<LoginResponse> => {
-                set({ loading: true });
-
-                try {
-                    // 调用API服务
-                    const response = await authApi.login(params);
-
-                    // 设置登录状态
-                    set({
-                        isLogin: true,
-                        accessToken: response.token,
-                        refreshToken: response.refreshToken || '',
-                        userInfo: response.userInfo,
-                        loading: false,
-                    });
-
-                    return response;
-                } catch (error) {
-                    set({ loading: false });
-                    throw error;
-                }
-            },
-
             // 退出登录
             logout: () => {
                 set({
@@ -119,6 +95,8 @@ export const authStore = create<AuthState>()(
                     ...getInitialState(),
                 });
             },
+
+            setState: (state: PartialState<AuthState>) => set(state),
         }),
         {
             name: 'auth-storage', // 存储键名
@@ -150,9 +128,9 @@ export const authStore = create<AuthState>()(
                 setToken: state.setToken,
                 setUserInfo: state.setUserInfo,
                 setLoginStatus: state.setLoginStatus,
-                login: state.login,
                 logout: state.logout,
                 clearAuth: state.clearAuth,
+                setState: state.setState,
             }),
         },
     ),
@@ -169,8 +147,8 @@ export const useAuth = () => {
         accessToken: store.accessToken,
 
         // 操作
-        login: store.login,
         logout: store.logout,
         setLoading: store.setLoading,
+        setState: store.setState,
     };
 };
