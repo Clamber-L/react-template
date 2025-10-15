@@ -302,7 +302,7 @@ const MenuPage: React.FC = () => {
                             icon={<PlusOutlined />}
                             onClick={() => handleAddMenu(false)}
                         >
-                            添加菜单
+                            添加目录
                         </Button>
                         <Button
                             icon={isExpanded ? <CompressOutlined /> : <ExpandOutlined />}

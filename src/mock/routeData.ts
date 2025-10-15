@@ -162,7 +162,7 @@ export const mockRouteTree: Permission[] = [
             {
                 id: '13',
                 path: '/system-user',
-                component: 'System/UserPage',
+                component: 'User',
                 name: 'UserPage',
                 label: '用户管理',
                 parentId: '3',

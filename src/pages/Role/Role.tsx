@@ -3,7 +3,6 @@ import { Button, Card, Table, Tag, Modal, Form, Input, Switch, Space, message, T
 import type { ColumnsType } from 'antd/es/table';
 import { SettingOutlined, EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import type { Permission } from '@/types/user';
-import { PermissionType } from '@/types/enum';
 import { mockRouteTree } from '@/mock/routeData';
 
 // 模拟角色数据类型

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select, Checkbox, Dropdown, MenuProps, App } from 'antd';
 import { GlobalOutlined, BulbOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/stores/authStore';
 import { useTheme } from '@/providers/ThemeProvider';
 import { HOMEPAGE } from '@/router';
 import { authApi } from '@/api/authApi';
 import DragVerify from '@/components/dragVerify/DragVerify';
+import { useRouter } from '@/hooks';
 
 const { Option } = Select;
 
@@ -84,13 +84,13 @@ const LoginLeftView: React.FC = () => {
 };
 
 const Login: React.FC = () => {
-    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const { setState } = useAuth();
     const { toggleTheme } = useTheme();
     const [isPassing, setIsPassing] = useState(false);
     const [isClickPass, setIsClickPass] = useState(false);
     const [form] = Form.useForm<LoginFormData>();
+    const router = useRouter();
     const { message, notification } = App.useApp(); // 使用 App 上下文中的 message/notification
 
     // 预设账号配置
@@ -184,7 +184,7 @@ const Login: React.FC = () => {
                 });
             }, 150);
 
-            navigate(HOMEPAGE, { replace: true });
+            router.push(HOMEPAGE);
         } catch (error) {
             console.error('登录失败:', error);
             message.error('登录失败，请检查用户名和密码');
