@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, Button, Row, Col, Statistic, Progress, Tag } from 'antd';
 import {
     DollarOutlined,
@@ -12,6 +12,7 @@ import {
 } from '@ant-design/icons';
 
 import { useAuth } from '@/stores/authStore';
+import { useContextPageAgent } from '@/providers/ThemeProvider';
 
 // 计数动画组件
 const CountTo: React.FC<{
@@ -306,6 +307,12 @@ const RecentTransaction: React.FC = () => {
 
 const Dashboard: React.FC = () => {
     const { userInfo } = useAuth();
+
+    const agent = useContextPageAgent();
+
+    useEffect(() => {
+        agent?.panel.show();
+    }, []);
 
     return (
         <div className="space-y-6">

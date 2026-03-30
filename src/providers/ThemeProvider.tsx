@@ -2,12 +2,16 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 import { ConfigProvider, App as AntdApp } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 
+import { PageAgent } from 'page-agent';
+
 import { lightTheme, darkTheme } from '@/config';
+import { usePageAgent } from '@/hooks/usePageAgent';
 
 // 主题上下文
 interface ThemeContextType {
     isDark: boolean;
     toggleTheme: () => void;
+    pageAgent: PageAgent | undefined;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -18,6 +22,14 @@ export const useTheme = () => {
         throw new Error('useTheme must be used within a ThemeProvider');
     }
     return context;
+};
+
+export const useContextPageAgent = () => {
+    const context = useContext(ThemeContext);
+    if (!context) {
+        throw new Error('useContextPageAgent must be used within a ThemeProvider');
+    }
+    return context.pageAgent;
 };
 
 interface ThemeProviderProps {
@@ -39,6 +51,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         document.body.classList.toggle('dark', shouldBeDark);
     }, []);
 
+    const pageAgent = usePageAgent();
+
     const toggleTheme = () => {
         const newIsDark = !isDark;
         setIsDark(newIsDark);
@@ -48,7 +62,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         document.body.classList.toggle('dark', newIsDark);
     };
 
-    const contextValue = useMemo(() => ({ isDark, toggleTheme }), [isDark, toggleTheme]);
+    const contextValue = useMemo(() => ({ isDark, toggleTheme, pageAgent }), [isDark, toggleTheme]);
 
     return (
         <ThemeContext.Provider value={contextValue}>
